@@ -1,14 +1,7 @@
 #!/bin/bash
-# ============================================================================
-# Submit MEG_NIPS pretrain (multi-model sweep, 5 split_seeds each).
-#
-# Usage:
-#   bash submit.sh                                    # all models in sweep
-#   bash submit.sh --models brain_magic_speech_v7,awavenet
-#   bash submit.sh --models ""                        # config.yaml only
-# ============================================================================
+# Submit paper models over five LibriBrain split seeds.
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -28,9 +21,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Resolve model list
-if [ -z "$MODELS" ]; then
-    MODEL_LIST=("")
-elif [ "$MODELS" = "all" ]; then
+if [ "$MODELS" = "all" ]; then
     MODEL_LIST=($($PYTHON -c "
 import yaml
 with open('$SWEEP_FILE') as f:
@@ -38,6 +29,7 @@ with open('$SWEEP_FILE') as f:
 print(' '.join(data.keys()))
 "))
 else
+    [ -n "$MODELS" ] || { echo "--models must name a model or use all" >&2; exit 2; }
     IFS=',' read -ra MODEL_LIST <<< "$MODELS"
 fi
 
@@ -45,16 +37,10 @@ mkdir -p log
 
 for model in "${MODEL_LIST[@]}"; do
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    SNAPSHOT_DIR="log/snapshot_${TIMESTAMP}${model:+_${model}}"
+    SNAPSHOT_DIR="log/snapshot_${TIMESTAMP}_${model}"
     mkdir -p "$SNAPSHOT_DIR"
 
-    if [ -z "$model" ]; then
-        cp configs/speech/my_run/config.yaml "$SNAPSHOT_DIR/config.yaml"
-        cp configs/speech/my_run/search-space.yaml "$SNAPSHOT_DIR/search-space.yaml"
-        JOB_MODEL=$(grep -E '^  [a-z_]+:' configs/speech/my_run/config.yaml | head -1 | sed 's/.*  //;s/:.*//')
-        JOB_PREFIX="meg_pt"
-    else
-        $PYTHON -c "
+    $PYTHON -c "
 import yaml
 with open('configs/speech/my_run/config.yaml') as f:
     cfg = yaml.safe_load(f)
@@ -79,9 +65,8 @@ ss['(\"optimizer\", \"config\", \"lr\")'] = [0.001]
 with open('$SNAPSHOT_DIR/search-space.yaml', 'w') as f:
     yaml.dump(ss, f, sort_keys=False)
 "
-        JOB_MODEL="$model"
-        JOB_PREFIX="meg_pt_${model}"
-    fi
+    JOB_MODEL="$model"
+    JOB_PREFIX="meg_pt_${model}"
 
     N_RUNS=$($PYTHON -c "
 import yaml, itertools

@@ -35,8 +35,8 @@ if [ -n "${SUBJECTS_FILE:-}" ] && [ -f "$SUBJECTS_FILE" ]; then
 fi
 
 # Use snapshot configs if provided, else defaults
-CONFIG="${CONFIG_FILE:-configs/speech/my_run/config.yaml}"
-SEARCH_SPACE="${SEARCH_SPACE_FILE:-configs/speech/my_run/search-space.yaml}"
+CONFIG="${CONFIG_FILE:?CONFIG_FILE is required}"
+SEARCH_SPACE="${SEARCH_SPACE_FILE:?SEARCH_SPACE_FILE is required}"
 
 echo "============================================"
 echo " SparKULee VAD - Pretrain + Per-Subject Eval"

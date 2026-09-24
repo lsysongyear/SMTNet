@@ -1,20 +1,6 @@
 # ============================================================================
-# configs/speech/my_run/config.yaml - 主实验配置文件 (UPDATE for PKU EEG)
+# PKU-EEG paper-run base configuration.
 # ============================================================================
-# 用于 train.py 的主配置文件，定义了数据集、模型、损失函数、优化器
-# 和训练器的全部参数。与 search-space.yaml 搭配使用进行超参搜索。
-#
-# 使用方式：
-#   python speech_code/train.py --config=configs/speech/my_run/config.yaml \
-#       --search-space=configs/speech/my_run/search-space.yaml --holdout=False --run-index=0
-#
-# 配置结构：
-#   data      → 数据集定义（训练/验证/测试集路径、被试划分、窗口长度）
-#   model     → 模型架构参数（输入维度 57、注意力维度 128、卷积核大小等）
-#   loss      → 损失函数配置（类别权重）
-#   optimizer → 优化器配置（类型、学习率）
-#   trainer   → Lightning Trainer 参数（最大 epoch 数）
-#   general   → 通用设置（输出路径、随机种子、阈值列表、损失类型）
 # ============================================================================
 
 # ---------------------------------------------------------------------------
@@ -24,19 +10,6 @@ data:
   # --- 数据集定义 ---
   datasets:
     # 训练集：被试由 train.py 动态分配（include_subjects），默认 20 名被试
-    # [COMMENTED OUT] Old LibriBrain MEG config:
-    # train:
-    #   - speech_v1:
-    #       data_path: '/gpfs/share/home/2201112028/libribrain_data'
-    #       preprocessing_str: 'bads+headpos+sss+notch+bp+ds'
-    #       standardize: true
-    #       tmin: 0.0
-    #       tmax: 12.0
-    #       exclude_run_keys: [...]
-    #       preload_files: false
-    #       download: false
-    #       delay: 0
-    #       data_type: 'train'
     train:
       - eeg_speech_v1:
           data_path: '/gpfs/share/home/2201112028/lsycode/pkueeg/1-80Hz'                   # raw EEG npz 目录 (64ch, 250Hz)
@@ -51,9 +24,6 @@ data:
           data_type: 'train'                                         # 数据类型标记
 
     # 验证集：被试由 train.py 动态分配，默认 3 名被试
-    # [COMMENTED OUT] Old LibriBrain MEG config:
-    # val:
-    #   - speech_v1: ...
     val:
       - eeg_speech_v1:
           data_path: '/gpfs/share/home/2201112028/lsycode/pkueeg/1-80Hz'
@@ -68,9 +38,6 @@ data:
           data_type: 'val'
 
     # 测试集：被试由 train.py 动态分配，默认 2 名被试
-    # [COMMENTED OUT] Old LibriBrain MEG config:
-    # test:
-    #   - speech_v1: ...
     test:
       - eeg_speech_v1:
           data_path: '/gpfs/share/home/2201112028/lsycode/pkueeg/1-80Hz'
@@ -92,24 +59,20 @@ data:
   # --- 通用数据设置 ---
   general:
     inMemory: False     # 是否将所有数据加载到内存中（False=惰性加载，节省内存）
-    #train_fraction: 0.003   # 可选：训练集使用比例（用于快速调试）
-    #val_fraction: 0.01      # 可选：验证集使用比例
 
 # ---------------------------------------------------------------------------
-# 模型配置 - Brain_Magic_speech_v2
-# 空间注意力 + FeatureEncoder + 门控多尺度短时卷积 + 深度可分离卷积 + BiLSTM
-# 输入 (B,C,L) channel-first，output (B, T)
+# Model parameters used by the paper-run submit script.
 # ---------------------------------------------------------------------------
 model:
-  brain_magic_no_feature_encoder:
+  brain_magic_speech_v7:
       input_dim: 57
       attention_dim: 128
       output_dim: 1
       kernel_size: 40
       depthwise_kernel: 30
       n_subjects: 25
-      num_blocks1: 9
-      num_blocks2: 15
+      num_blocks1: 8
+      num_blocks2: 19
       dropout: 0.1
   
 # ---------------------------------------------------------------------------
@@ -141,7 +104,7 @@ trainer:
 general:
   tensorboard: False    # 是否启用 TensorBoard 可视化
   output_path: 'results'                          # 结果输出根目录
-  model_name: "brain_magic_no_feature_encoder"                                          # 模型名称（用于结果路径和日志）
+  model_name: "brain_magic_speech_v7"                                          # 模型名称（用于结果路径和日志）
   dataset_name: "eeg_speech_v1"                   # [CHANGED] 数据集名称
   project_name: "speech-detection"                # 项目名称（用于结果路径组织）
   seed: 1                                        # 随机种子（用于可复现性，同时控制被试划分）

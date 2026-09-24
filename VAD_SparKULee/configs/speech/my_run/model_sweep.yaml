@@ -2,16 +2,6 @@
 # model_sweep.yaml — 多模型批量运行参数定义 (SparKULee: 64ch, 85 subjects)
 # ============================================================================
 
-# Original three-branch backbone with the common subject-indexed frontend.
-brain_magic_speech:
-  input_dim: 64
-  attention_dim: 128
-  output_dim: 1
-  kernel_size: 25
-  depthwise_kernel: 19
-  dropout: 0.01
-  n_subjects: 85
-
 brain_magic_speech_v7:
   input_dim: 64
   attention_dim: 128
@@ -79,13 +69,6 @@ dilated_conv:
   n_layers: 3
   kernel_size: 3
   dilation_filters: 32
-  n_subjects: 85
-
-vlaai:
-  input_channels: 64
-  output_dim: 1
-  nb_blocks: 16
-  use_skip: true
   n_subjects: 85
 
 pnpl_cnn_tcn:

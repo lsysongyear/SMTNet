@@ -55,8 +55,8 @@ model:
       kernel_size: 40
       dropout: 0.1
       depthwise_kernel: 30
-      num_blocks1: 9
-      num_blocks2: 15
+      num_blocks1: 8
+      num_blocks2: 19
 
 loss:
   config:

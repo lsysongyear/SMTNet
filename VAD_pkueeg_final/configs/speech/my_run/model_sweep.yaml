@@ -4,16 +4,6 @@
 #       bash submit_pretrain_per_sub_5t5v.sh --models brain_magic_speech_v7,awavenet
 # ============================================================================
 
-# Original three-branch backbone with the common subject-indexed frontend.
-brain_magic_speech:
-  input_dim: 57
-  attention_dim: 128
-  output_dim: 1
-  kernel_size: 25
-  depthwise_kernel: 19
-  dropout: 0.01
-  n_subjects: 25
-
 brain_magic_speech_v7:
   input_dim: 57
   attention_dim: 128
@@ -81,13 +71,6 @@ dilated_conv:
   n_layers: 3
   kernel_size: 3
   dilation_filters: 32
-  n_subjects: 25
-
-vlaai:
-  input_channels: 57
-  output_dim: 1
-  nb_blocks: 16
-  use_skip: true
   n_subjects: 25
 
 eeg_conformer:

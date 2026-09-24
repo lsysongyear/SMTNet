@@ -337,31 +337,20 @@ def main(args):
     config_save_path = os.path.join(run_dir, "config.yaml")
 
     model_source_files = {
-        "pnpl_cnn_tcn": "speech_code/models/my_modules/CNNTCN.py",
-        "brain_magic_speech": "speech_code/models/my_modules/BrainNetwork.py",
-        "brain_magic_speech_v1": "speech_code/models/my_modules/BrainNetwork_v1.py",
-        "brain_magic_speech_v2": "speech_code/models/my_modules/BrainNetwork_v2.py",
-        "brain_magic_speech_v3": "speech_code/models/my_modules/BrainNetwork_v3.py",
-        "brain_magic_speech_v4": "speech_code/models/my_modules/BrainNetwork_v4.py",
-        "brain_magic_speech_v5": "speech_code/models/my_modules/BrainNetwork_v5.py",
-        "brain_magic_speech_v6": "speech_code/models/my_modules/BrainNetwork_v6.py",
         "brain_magic_speech_v7": "speech_code/models/my_modules/BrainNetwork_v7.py",
-        "awavenet": "speech_code/models/my_modules/AWaveNet.py",
-        "cnn_lstm": "speech_code/models/my_modules/CNNLSTM.py",
-        "dilated_conv": "speech_code/models/my_modules/DilatedConv.py",
-        "vlaai": "speech_code/models/my_modules/VLAAI.py",
-        "eeg_conformer": "speech_code/models/conformer.py",
         "brain_magic_no_subject_attn": "speech_code/models/my_modules/BrainNetwork_v7_ablation.py",
         "brain_magic_no_short_conv": "speech_code/models/my_modules/BrainNetwork_v7_ablation.py",
         "brain_magic_no_feature_encoder": "speech_code/models/my_modules/BrainNetwork_v7_ablation.py",
+        "cnn_lstm": "speech_code/models/my_modules/CNNLSTM.py",
+        "dilated_conv": "speech_code/models/my_modules/DilatedConv.py",
+        "awavenet": "speech_code/models/my_modules/AWaveNet.py",
+        "eeg_conformer": "speech_code/models/conformer.py",
+        "pnpl_cnn_tcn": "speech_code/models/my_modules/CNNTCN.py",
     }
     model_key = config["general"]["model_name"]
-    src_file = model_source_files.get(model_key, "speech_code/models/my_modules/BrainNetwork.py")
+    src_file = model_source_files[model_key]
     shutil.copy(src_file, config["general"]["model_path"])
     if model_key == "pnpl_cnn_tcn":
-        shutil.copy("speech_code/models/my_modules/public_baseline_utils.py", run_dir)
-    if model_key == "brain_magic_speech":
-        shutil.copy("speech_code/models/my_modules/BrainNetworkSubject.py", run_dir)
         shutil.copy("speech_code/models/my_modules/public_baseline_utils.py", run_dir)
 
     all_subjects, all_stories = infer_split_items(config)

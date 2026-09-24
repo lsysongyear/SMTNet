@@ -36,8 +36,8 @@ echo " Subjects: ${PRETRAIN_SUBJECTS:-ALL 25}"
 echo " Log: $LOG_FILE"
 echo "============================================"
 
-CONFIG="${CONFIG_FILE:-configs/speech/my_run/config.yaml}"
-SEARCH_SPACE="${SEARCH_SPACE_FILE:-configs/speech/my_run/search-space.yaml}"
+CONFIG="${CONFIG_FILE:?CONFIG_FILE is required}"
+SEARCH_SPACE="${SEARCH_SPACE_FILE:?SEARCH_SPACE_FILE is required}"
 
 CMD="$PYTHON speech_code/train_v1.py \
   --config=$CONFIG \

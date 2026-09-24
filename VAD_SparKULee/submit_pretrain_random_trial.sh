@@ -1,16 +1,7 @@
 #!/bin/bash
-# ============================================================================
-# Submit SparKULee pretrain + per-subject eval (multi-model sweep support).
-#
-# Usage:
-#   bash submit_pretrain_random_trial.sh                           # all models in sweep
-#   bash submit_pretrain_random_trial.sh --models brain_magic_speech_v7,awavenet
-#   bash submit_pretrain_random_trial.sh --models ""                # config.yaml only
-#   bash submit_pretrain_random_trial.sh --subjects 1-10 --seed 42
-#   bash submit_pretrain_random_trial.sh --output-path results_candidate18_seed1
-# ============================================================================
+# Submit paper models and per-subject evaluation on the shared-story split.
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -35,13 +26,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [ -z "$OUTPUT_PATH" ]; then
-    if [ "$SPLIT_SEED" = "84" ]; then
-        OUTPUT_PATH="results_candidate18_seed1"
-    else
-        OUTPUT_PATH="results_shared_story_seed${SPLIT_SEED}"
-    fi
-fi
+OUTPUT_PATH="${OUTPUT_PATH:-results_paper_candidate18}"
 case "$OUTPUT_PATH" in
     /*|..|../*|*/..|*/../*) echo "Output path must remain within this release project" >&2; exit 1 ;;
 esac
@@ -86,9 +71,7 @@ PY
 fi
 
 # Resolve model list
-if [ -z "$MODELS" ]; then
-    MODEL_LIST=("")
-elif [ "$MODELS" = "all" ]; then
+if [ "$MODELS" = "all" ]; then
     MODEL_LIST=($($PYTHON -c "
 import yaml
 with open('$SWEEP_FILE') as f:
@@ -96,6 +79,7 @@ with open('$SWEEP_FILE') as f:
 print(' '.join(data.keys()))
 "))
 else
+    [ -n "$MODELS" ] || { echo "--models must name a model or use all" >&2; exit 2; }
     IFS=',' read -ra MODEL_LIST <<< "$MODELS"
 fi
 
@@ -108,16 +92,10 @@ echo "$SUBJECTS" > "$SUBJECTS_FILE"
 
 for model in "${MODEL_LIST[@]}"; do
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    SNAPSHOT_DIR="log/per_sub/pretrain/snapshot_${TIMESTAMP}${model:+_${model}}"
+    SNAPSHOT_DIR="log/per_sub/pretrain/snapshot_${TIMESTAMP}_${model}"
     mkdir -p "$SNAPSHOT_DIR"
 
-    if [ -z "$model" ]; then
-        cp configs/speech/my_run/config.yaml "$SNAPSHOT_DIR/config.yaml"
-        cp configs/speech/my_run/search-space.yaml "$SNAPSHOT_DIR/search-space.yaml"
-        JOB_MODEL=$(grep -E '^  [a-z_]+:' configs/speech/my_run/config.yaml | head -1 | sed 's/.*  //;s/:.*//')
-        JOB_PREFIX="spk_pt"
-    else
-        $PYTHON -c "
+    $PYTHON -c "
 import yaml
 with open('configs/speech/my_run/config.yaml') as f:
     cfg = yaml.safe_load(f)
@@ -140,9 +118,8 @@ ss['(\"optimizer\", \"config\", \"lr\")'] = [0.001]
 with open('$SNAPSHOT_DIR/search-space.yaml', 'w') as f:
     yaml.dump(ss, f, sort_keys=False)
 "
-        JOB_MODEL="$model"
-        JOB_PREFIX="spk_pt_${model}"
-    fi
+    JOB_MODEL="$model"
+    JOB_PREFIX="spk_pt_${model}"
 
     $PYTHON -c "
 import yaml

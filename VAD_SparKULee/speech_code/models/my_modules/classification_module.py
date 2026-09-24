@@ -18,15 +18,13 @@ from torchmetrics import Accuracy, Precision, Recall
 from pytorch_lightning import LightningModule
 from torchmetrics import F1Score
 from .utils import modules_from_config, optimizer_from_config, loss_fn_from_config
-from speech_code.models.my_modules.BrainNetwork_v4 import Brain_Magic_speech_v1 as Brain_Magic_speech_v4
 from speech_code.models.my_modules.BrainNetwork_v7 import Brain_Magic_speech_v1 as Brain_Magic_speech_v7
 from speech_code.models.my_modules.CNNLSTM import CNNLSTM
 from speech_code.models.my_modules.DilatedConv import DilatedConv
 from speech_code.models.my_modules.AWaveNet import AWaveNet
-from speech_code.models.my_modules.VLAAI import VLAAI
 from speech_code.models.conformer import EEGConformer
 from speech_code.models.my_modules.BrainNetwork_v7_ablation import (
-    BrainMagic_NoSubjectAttn, BrainMagic_NoShortConv, BrainMagic_NoFeatureEncoder
+    BrainMagic_NoSubjectAttn, BrainMagic_NoShortConv, BrainMagic_NoFeatureEncoder,
 )
 import torch
 import torch.nn.functional as F
@@ -208,9 +206,8 @@ class ClassificationModule(LightningModule):
         input_len = x.shape[-1]
 
         for module in self.modules_list:
-            if isinstance(module, (Brain_Magic_speech_v4, Brain_Magic_speech_v7,
-                                   CNNLSTM, DilatedConv, AWaveNet, VLAAI, EEGConformer,
-                                   BrainMagic_NoSubjectAttn, BrainMagic_NoShortConv, BrainMagic_NoFeatureEncoder)) or getattr(module, "requires_subject_ids", False):
+            if isinstance(module, (Brain_Magic_speech_v7, CNNLSTM, DilatedConv, AWaveNet, EEGConformer,
+                           BrainMagic_NoSubjectAttn, BrainMagic_NoShortConv, BrainMagic_NoFeatureEncoder)) or getattr(module, "requires_subject_ids", False):
                 x = module(x, subject_ids=subject_ids)
             else:
                 x = module(x)

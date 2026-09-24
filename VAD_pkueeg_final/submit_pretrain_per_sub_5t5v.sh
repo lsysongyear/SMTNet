@@ -1,13 +1,5 @@
 #!/bin/bash
-# ============================================================================
-# Submit pretrain with per_sub_5t5v split.
-#
-# Usage:
-#   bash submit_pretrain_per_sub_5t5v.sh                                  # current config
-#   bash submit_pretrain_per_sub_5t5v.sh --models all                     # all models in model_sweep.yaml
-#   bash submit_pretrain_per_sub_5t5v.sh --models brain_magic_speech_v7,awavenet,cnn_lstm
-#   bash submit_pretrain_per_sub_5t5v.sh --seeds 102-106 --subjects 1-15
-# ============================================================================
+# Submit paper models with the per_sub_5t5v split.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -18,7 +10,7 @@ PYTHON="${PYTHON:-python3}"
 test -f speech_code/train_v1.py || { echo "Run from the Code_Release/VAD_pkueeg_final source tree" >&2; exit 1; }
 SEED=545
 SUBJECTS="1-25"
-MODELS="all"       # default: all models in model_sweep.yaml; set "" for config.yaml only
+MODELS="all"
 SLURM_SCRIPT="job_pretrain_per_sub_5t5v.slurm"
 SWEEP_FILE="configs/speech/my_run/model_sweep.yaml"
 
@@ -42,10 +34,7 @@ done
 [ ${#SEEDS[@]} -eq 0 ] && SEEDS=("$SEED")
 
 # Resolve model list
-if [ -z "$MODELS" ]; then
-    MODEL_LIST=("")
-elif [ "$MODELS" = "all" ]; then
-    # Read all model names from sweep file
+if [ "$MODELS" = "all" ]; then
     MODEL_LIST=($($PYTHON -c "
 import yaml
 with open('$SWEEP_FILE') as f:
@@ -53,6 +42,7 @@ with open('$SWEEP_FILE') as f:
 print(' '.join(data.keys()))
 "))
 else
+    [ -n "$MODELS" ] || { echo "--models must name a model or use all" >&2; exit 2; }
     IFS=',' read -ra MODEL_LIST <<< "$MODELS"
 fi
 
@@ -60,17 +50,10 @@ mkdir -p log/per_sub_5t5v/pretrain
 
 for model in "${MODEL_LIST[@]}"; do
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    SNAPSHOT_DIR="log/per_sub_5t5v/pretrain/snapshot_${TIMESTAMP}${model:+_${model}}"
+    SNAPSHOT_DIR="log/per_sub_5t5v/pretrain/snapshot_${TIMESTAMP}_${model}"
     mkdir -p "$SNAPSHOT_DIR"
 
-    if [ -z "$model" ]; then
-        cp configs/speech/my_run/config.yaml "$SNAPSHOT_DIR/config.yaml"
-        cp configs/speech/my_run/search-space.yaml "$SNAPSHOT_DIR/search-space.yaml"
-        JOB_MODEL=$(grep -E '^  [a-z_]+:' configs/speech/my_run/config.yaml | head -1 | sed 's/.*  //;s/:.*//')
-        JOB_PREFIX="vad_pt"
-    else
-        # Generate config + search-space from sweep file
-        $PYTHON -c "
+    $PYTHON -c "
 import yaml
 with open('configs/speech/my_run/config.yaml') as f:
     cfg = yaml.safe_load(f)
@@ -96,9 +79,8 @@ ss['(\"data\", \"datasets\", \"train\", 0, \"eeg_speech_v1\", \"tmax\")'] = [12.
 with open('$SNAPSHOT_DIR/search-space.yaml', 'w') as f:
     yaml.dump(ss, f, sort_keys=False)
 "
-        JOB_MODEL="$model"
-        JOB_PREFIX="vad_pt_${model}"
-    fi
+    JOB_MODEL="$model"
+    JOB_PREFIX="vad_pt_${model}"
 
     # Count HPO runs
     N_RUNS=$($PYTHON -c "

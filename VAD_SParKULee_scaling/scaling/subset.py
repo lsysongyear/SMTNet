@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-SCALES = (0.05, 0.10, 0.20, 0.40, 0.50, 0.60, 0.80, 1.00)
+SCALES = (0.05, 0.10, 0.20, 0.50, 0.80, 1.00)
 ALL_SUBJECTS = (
     "001", "002", "003", "005", "006", "007", "008", "009",
     "010", "011", "012", "013", "014", "015", "016", "018",
@@ -102,19 +102,6 @@ def partition_pairs(splits, partition):
     )
 
 
-def legacy_partition_pairs(subject_stories, splits, partition, reference_subject="001"):
-    attribute = f"{partition}_stories"
-    if partition not in {"train", "val", "test"}:
-        raise ValueError(f"Unsupported partition: {partition}")
-    shared_stories = set(getattr(splits[reference_subject], attribute))
-    return tuple(
-        (subject, story)
-        for subject in ALL_SUBJECTS
-        for story in subject_stories[subject]
-        if story in shared_stories
-    )
-
-
 def assert_no_story_leakage(splits):
     for subject, split in splits.items():
         train = set(split.train_stories)
@@ -134,22 +121,3 @@ def assert_no_story_leakage(splits):
     }
     if train & val or train & test or val & test:
         raise RuntimeError("Cross-subject story leakage detected")
-
-
-def nested_subset_indices(dataset_size, scale, subset_seed):
-    scale = normalize_scale(scale)
-    if dataset_size <= 0:
-        raise ValueError("dataset_size must be positive")
-    permutation = list(range(dataset_size))
-    random.Random(subset_seed).shuffle(permutation)
-    count = max(1, int(round(dataset_size * scale)))
-    return tuple(sorted(permutation[:count]))
-
-
-def assert_nested_subsets(dataset_size, subset_seed):
-    previous = set()
-    for scale in SCALES:
-        current = set(nested_subset_indices(dataset_size, scale, subset_seed))
-        if not previous.issubset(current):
-            raise RuntimeError(f"Window subsets are not nested at scale={scale}")
-        previous = current

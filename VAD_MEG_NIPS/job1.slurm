@@ -15,7 +15,7 @@ cd "${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 RUN_INDEX="${SLURM_ARRAY_TASK_ID:-0}"
 PYTHON="${PYTHON:-python3}"
 test -f speech_code/train.py || { echo "Missing release training source" >&2; exit 1; }
-CONFIG="${CONFIG_FILE:-configs/speech/my_run/config.yaml}"
-SEARCH_SPACE="${SEARCH_SPACE_FILE:-configs/speech/my_run/search-space.yaml}"
+CONFIG="${CONFIG_FILE:?CONFIG_FILE is required}"
+SEARCH_SPACE="${SEARCH_SPACE_FILE:?SEARCH_SPACE_FILE is required}"
 
 $PYTHON speech_code/train.py --config="$CONFIG" --search-space="$SEARCH_SPACE" --run-index=$RUN_INDEX

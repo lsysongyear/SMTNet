@@ -2,16 +2,6 @@
 # model_sweep.yaml — VAD_SEM4Lang 多模型参数 (204ch, 12 subjects, MEG)
 # ============================================================================
 
-# Original three-branch backbone with the common subject-indexed frontend.
-brain_magic_speech:
-  input_dim: 204
-  attention_dim: 128
-  output_dim: 1
-  kernel_size: 25
-  depthwise_kernel: 19
-  dropout: 0.01
-  n_subjects: 12
-
 brain_magic_speech_v7:
   input_dim: 204
   attention_dim: 128
@@ -79,13 +69,6 @@ dilated_conv:
   n_layers: 3
   kernel_size: 3
   dilation_filters: 32
-  n_subjects: 12
-
-vlaai:
-  input_channels: 204
-  output_dim: 1
-  nb_blocks: 16
-  use_skip: true
   n_subjects: 12
 
 pnpl_cnn_tcn:

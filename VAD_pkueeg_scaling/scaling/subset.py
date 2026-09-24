@@ -2,7 +2,7 @@ import random
 from dataclasses import dataclass
 
 
-SCALES = (0.05, 0.10, 0.20, 0.40, 0.50, 0.60, 0.80, 1.00)
+SCALES = (0.05, 0.10, 0.20, 0.50, 0.80, 1.00)
 ALL_SUBJECTS = tuple(f"{i:02d}" for i in range(1, 26))
 ALL_STORIES = tuple(range(1, 51))
 

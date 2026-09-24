@@ -1,20 +1,7 @@
 #!/bin/bash
-# ============================================================================
-# submit_train.sh - SEM4Lang MEG VAD (multi-model sweep, per_sub_5t5v)
-# 5 val + 5 test stories per subject, same split for all subjects.
-# split_seed controls the random split.
-#
-# Usage:
-#   bash submit_train.sh                                    # default: config model, split seed 5
-#   bash submit_train.sh --models brain_magic_speech_v7     # single model
-#   bash submit_train.sh --models ""                        # config only
-#   bash submit_train.sh --seeds 42                         # single seed
-#   bash submit_train.sh --seeds 42-46                      # seed range
-#   bash submit_train.sh --seeds "42 123 456"               # seed list
-#   bash submit_train.sh --models all --seeds 5 --output-path results_split5_all_models
-# ============================================================================
+# Submit paper models with the per_sub_5t5v split.
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -23,7 +10,7 @@ PYTHON="${PYTHON:-python3}"
 "$PYTHON" -c 'import yaml' || { echo "PYTHON must provide PyYAML" >&2; exit 1; }
 test -f speech_code/train_v1.py || { echo "Run from the Code_Release/VAD_SEM4Lang source tree" >&2; exit 1; }
 DEFAULT_SEEDS="5"
-MODELS=""
+MODELS="all"
 OUTPUT_PATH=""
 SLURM_SCRIPT="job_train.slurm"
 SWEEP_FILE="configs/speech/my_run/model_sweep.yaml"
@@ -58,9 +45,7 @@ if [ -n "$OUTPUT_PATH" ]; then
     esac
 fi
 
-if [ -z "$MODELS" ]; then
-    MODEL_LIST=("")
-elif [ "$MODELS" = "all" ]; then
+if [ "$MODELS" = "all" ]; then
     MODEL_LIST=($($PYTHON -c "
 import yaml
 with open('$SWEEP_FILE') as f:
@@ -68,6 +53,7 @@ with open('$SWEEP_FILE') as f:
 print(' '.join(data.keys()))
 "))
 else
+    [ -n "$MODELS" ] || { echo "--models must name a model or use all" >&2; exit 2; }
     IFS=',' read -ra MODEL_LIST <<< "$MODELS"
 fi
 
@@ -75,16 +61,10 @@ mkdir -p log/train
 
 for model in "${MODEL_LIST[@]}"; do
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    SNAPSHOT_DIR="log/train/snapshot_${TIMESTAMP}${model:+_${model}}"
+    SNAPSHOT_DIR="log/train/snapshot_${TIMESTAMP}_${model}"
     mkdir -p "$SNAPSHOT_DIR"
 
-    if [ -z "$model" ]; then
-        cp configs/speech/my_run/config.yaml "$SNAPSHOT_DIR/config.yaml"
-        cp configs/speech/my_run/search-space.yaml "$SNAPSHOT_DIR/search-space.yaml"
-        JOB_MODEL=$(grep -E '^  [a-z_]+:' configs/speech/my_run/config.yaml | head -1 | sed 's/.*  //;s/:.*//')
-        JOB_PREFIX="s4l_pt"
-    else
-        $PYTHON -c "
+    $PYTHON -c "
 import yaml
 with open('configs/speech/my_run/config.yaml') as f:
     cfg = yaml.safe_load(f)
@@ -108,9 +88,8 @@ ss['(\"optimizer\", \"config\", \"lr\")'] = [0.001]
 with open('$SNAPSHOT_DIR/search-space.yaml', 'w') as f:
     yaml.dump(ss, f, sort_keys=False)
 "
-        JOB_MODEL="$model"
-        JOB_PREFIX="s4l_pt_${model}"
-    fi
+    JOB_MODEL="$model"
+    JOB_PREFIX="s4l_pt_${model}"
 
     if [ -n "$OUTPUT_PATH" ]; then
         $PYTHON -c "

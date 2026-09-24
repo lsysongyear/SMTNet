@@ -21,11 +21,11 @@ from scaling.evaluate import evaluate_run
 from scaling.subset import (
     ALL_SUBJECTS,
     build_story_split,
+    infer_split_items,
     normalize_scale,
     scale_tag,
 )
 from speech_code.speech_utils import my_run_training
-from speech_code.train_v1 import infer_split_items
 from speech_code.utils import adapt_config_to_data, get_datasets_from_config
 
 
