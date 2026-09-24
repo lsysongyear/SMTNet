@@ -91,13 +91,6 @@ The selected checkpoint and threshold are applied to that subject's test
 set. For binary speech/silence labels,
 `Macro_Acc = (speech recall + silence recall) / 2`.
 
-| Dataset | Paper split | Model seed | Aggregation |
-| --- | --- | ---: | --- |
-| PKU-EEG | `split_seed=545` | 1 | 25 subjects |
-| SparrKULee | `candidate_18`, selected by comparing candidate test Macro_Acc; `split_seed=84`; validation `audiobook-5-1`; test `audiobook-5-3` | 1 | 23 subjects |
-| SMN4Lang | `split_seed=5` | 1 | 12 subjects |
-| LibriBrain | `split_seed=42,43,44,45,46` | 42 | Five splits |
-
 The SparrKULee submitter verifies the common validation/test story pair
 against the prepared recordings before submitting jobs. The shared model
 settings include batch size 64, AdamW with learning rate `1e-3`,
