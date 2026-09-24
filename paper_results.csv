@@ -1,0 +1,41 @@
+experiment,model,dataset,mean_macro_acc_pct,std_macro_acc_pct,aggregation,source
+baseline,CNN-LSTM (2015),PKU-EEG,57.38,2.65,subjects,Table 1
+baseline,CNN-LSTM (2015),SparrKULee,56.31,4.89,subjects,Table 1
+baseline,CNN-LSTM (2015),SMN4Lang,67.01,3.75,subjects,Table 1
+baseline,CNN-LSTM (2015),LibriBrain,77.17,0.93,splits,Table 1
+baseline,DilatedConv (2016),PKU-EEG,56.07,2.11,subjects,Table 1
+baseline,DilatedConv (2016),SparrKULee,55.39,4.75,subjects,Table 1
+baseline,DilatedConv (2016),SMN4Lang,68.62,4.19,subjects,Table 1
+baseline,DilatedConv (2016),LibriBrain,79.05,0.85,splits,Table 1
+baseline,EEGConformer (2023),PKU-EEG,56.48,1.96,subjects,Table 1
+baseline,EEGConformer (2023),SparrKULee,58.58,5.61,subjects,Table 1
+baseline,EEGConformer (2023),SMN4Lang,70.67,3.88,subjects,Table 1
+baseline,EEGConformer (2023),LibriBrain,81.95,0.89,splits,Table 1
+baseline,AWaveNet (2023),PKU-EEG,59.21,2.68,subjects,Table 1
+baseline,AWaveNet (2023),SparrKULee,58.92,5.75,subjects,Table 1
+baseline,AWaveNet (2023),SMN4Lang,72.87,4.31,subjects,Table 1
+baseline,AWaveNet (2023),LibriBrain,83.75,0.78,splits,Table 1
+baseline,CNN+TCN (2025),PKU-EEG,63.70,3.59,subjects,Table 1
+baseline,CNN+TCN (2025),SparrKULee,60.44,6.47,subjects,Table 1
+baseline,CNN+TCN (2025),SMN4Lang,77.29,4.38,subjects,Table 1
+baseline,CNN+TCN (2025),LibriBrain,88.10,0.65,splits,Table 1
+baseline,SMTNet,PKU-EEG,68.09,4.55,subjects,Table 1
+baseline,SMTNet,SparrKULee,64.76,6.98,subjects,Table 1
+baseline,SMTNet,SMN4Lang,78.19,4.68,subjects,Table 1
+baseline,SMTNet,LibriBrain,88.52,0.64,splits,Table 1
+ablation,w/o Spatial Projection,PKU-EEG,65.38,4.15,subjects,Table 2
+ablation,w/o Spatial Projection,SparrKULee,62.45,7.13,subjects,Table 2
+ablation,w/o Spatial Projection,SMN4Lang,74.86,4.93,subjects,Table 2
+ablation,w/o Spatial Projection,LibriBrain,,,not_applicable,Table 2
+ablation,w/o MultiScale Conv,PKU-EEG,67.97,4.39,subjects,Table 2
+ablation,w/o MultiScale Conv,SparrKULee,56.64,9.36,subjects,Table 2
+ablation,w/o MultiScale Conv,SMN4Lang,77.37,4.95,subjects,Table 2
+ablation,w/o MultiScale Conv,LibriBrain,88.36,0.62,splits,Table 2
+ablation,w/o BrainMagick Block,PKU-EEG,67.83,4.87,subjects,Table 2
+ablation,w/o BrainMagick Block,SparrKULee,64.06,6.74,subjects,Table 2
+ablation,w/o BrainMagick Block,SMN4Lang,77.57,5.00,subjects,Table 2
+ablation,w/o BrainMagick Block,LibriBrain,88.49,0.58,splits,Table 2
+ablation,Full Model,PKU-EEG,68.09,4.55,subjects,Table 2
+ablation,Full Model,SparrKULee,64.76,6.98,subjects,Table 2
+ablation,Full Model,SMN4Lang,78.19,4.68,subjects,Table 2
+ablation,Full Model,LibriBrain,88.52,0.64,splits,Table 2

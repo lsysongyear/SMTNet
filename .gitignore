@@ -1,0 +1,27 @@
+# Raw and derived recordings, labels, and weights are not redistributed.
+**/results*/
+**/log/
+**/logs/
+**/checkpoints/
+**/weights/
+**/data/
+**/output/
+**/output_by_story/
+**/eeg/
+**/eeg_1-80Hz/
+**/eeg_processed/
+**/meg/
+**/*.ckpt
+**/*.pth
+**/*.pt
+**/*.npz
+!VAD_MEG_NIPS/ch_types.npz
+**/*.npy
+**/*.fif
+**/*.wav
+**/*.mp3
+**/__pycache__/
+**/*.pyc
+.venv/
+.env
+.env.*

@@ -1,0 +1,78 @@
+data:
+  datasets:
+    train:
+      - eeg_speech_v1:
+          data_path: /gpfs/share/home/2201112028/lsycode/pkueeg/1-80Hz
+          label_path: /gpfs/share/home/2201112028/lsycode/ICASSP_2027/Label_VAD/output
+          standardize: true
+          tmin: 0.0
+          tmax: 12.0
+          include_subjects: []
+          stories: []
+          include_info: true
+          sfreq: 250.0
+          data_type: train
+    val:
+      - eeg_speech_v1:
+          data_path: /gpfs/share/home/2201112028/lsycode/pkueeg/1-80Hz
+          label_path: /gpfs/share/home/2201112028/lsycode/ICASSP_2027/Label_VAD/output
+          standardize: true
+          tmin: 0.0
+          tmax: 12.0
+          include_subjects: []
+          stories: []
+          include_info: true
+          sfreq: 250.0
+          data_type: val
+    test:
+      - eeg_speech_v1:
+          data_path: /gpfs/share/home/2201112028/lsycode/pkueeg/1-80Hz
+          label_path: /gpfs/share/home/2201112028/lsycode/ICASSP_2027/Label_VAD/output
+          standardize: true
+          tmin: 0.0
+          tmax: 12.0
+          include_subjects: []
+          stories: []
+          include_info: true
+          sfreq: 250.0
+          data_type: test
+  dataloader:
+    batch_size: 64
+    num_workers: 4
+  general:
+    inMemory: false
+
+model:
+  brain_magic_speech_v7:
+    input_dim: 57
+    attention_dim: 128
+    output_dim: 1
+    kernel_size: 40
+    depthwise_kernel: 30
+    n_subjects: 25
+    num_blocks1: 8
+    num_blocks2: 19
+    dropout: 0.1
+
+loss:
+  config:
+    weight: [1.0, 1.0]
+
+optimizer:
+  name: adamw
+  config:
+    lr: 0.001
+
+trainer:
+  max_epochs: 100
+
+general:
+  tensorboard: false
+  output_path: results/scaling
+  model_name: brain_magic_speech_v7
+  dataset_name: eeg_speech_v1
+  seed: 1
+  margin_weight: [0.1, 0.1]
+  threshold_min: 0.01
+  threshold_max: 0.99
+  threshold_step: 0.01

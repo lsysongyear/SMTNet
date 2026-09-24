@@ -1,0 +1,67 @@
+data:
+  datasets:
+    train:
+      - sem4lang_meg: &sem4lang
+          data_path: /gpfs/share/home/2201112028/lsycode/ICASSP_2027/VAD_SEM4Lang/SEM4Lang/meg
+          label_path: /gpfs/share/home/2201112028/lsycode/ICASSP_2027/VAD_SEM4Lang/Label_VAD/output
+          standardize: true
+          tmin: 0.0
+          tmax: 12.0
+          include_subjects: []
+          stories: []
+          sfreq: 100.0
+          label_sfreq: 250.0
+          preproc: NF
+          eeg_fs_tag: 100Hz
+          include_info: true
+          data_type: train
+    val:
+      - sem4lang_meg:
+          <<: *sem4lang
+          data_type: val
+    test:
+      - sem4lang_meg:
+          <<: *sem4lang
+          data_type: test
+  dataloader:
+    batch_size: 64
+    num_workers: 4
+  general:
+    inMemory: false
+
+model:
+  brain_magic_speech_v7:
+    input_dim: 204
+    attention_dim: 128
+    output_dim: 1
+    kernel_size: 40
+    depthwise_kernel: 30
+    n_subjects: 12
+    num_blocks1: 8
+    num_blocks2: 19
+    dropout: 0.1
+
+loss:
+  config:
+    weight: [1.0, 1.0]
+
+optimizer:
+  name: adamw
+  config:
+    lr: 0.001
+
+trainer:
+  max_epochs: 100
+
+general:
+  tensorboard: false
+  output_path: results/scaling
+  model_name: brain_magic_speech_v7
+  dataset_name: sem4lang_meg
+  project_name: speech-detection
+  seed: 1
+  loss_type: mse
+  margin_weight: [0.1, 0.1]
+  threshold_min: 0.01
+  threshold_max: 0.99
+  threshold_step: 0.01

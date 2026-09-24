@@ -1,0 +1,25 @@
+dataset,training_duration_pct,mean_macro_acc_pct,std_macro_acc_pct,aggregation,source
+PKU-EEG,5,62.05,,subjects,Figure 3 label
+PKU-EEG,10,63.82,,subjects,Figure 3 label
+PKU-EEG,20,66.04,,subjects,Figure 3 label
+PKU-EEG,50,68.03,,subjects,Figure 3 label
+PKU-EEG,80,67.94,,subjects,Figure 3 label
+PKU-EEG,100,68.09,,subjects,Figure 3 label
+SparrKULee,5,51.44,,subjects,Figure 3 label
+SparrKULee,10,53.60,,subjects,Figure 3 label
+SparrKULee,20,55.21,,subjects,Figure 3 label
+SparrKULee,50,60.50,,subjects,Figure 3 label
+SparrKULee,80,63.16,,subjects,Figure 3 label
+SparrKULee,100,64.76,,subjects,Figure 3 label
+SMN4Lang,5,63.10,,subjects,Figure 3 label
+SMN4Lang,10,68.09,,subjects,Figure 3 label
+SMN4Lang,20,71.95,,subjects,Figure 3 label
+SMN4Lang,50,75.53,,subjects,Figure 3 label
+SMN4Lang,80,77.51,,subjects,Figure 3 label
+SMN4Lang,100,78.19,,subjects,Figure 3 label
+LibriBrain,5,81.93,,splits,Figure 3 label
+LibriBrain,10,84.11,,splits,Figure 3 label
+LibriBrain,20,85.59,,splits,Figure 3 label
+LibriBrain,50,87.31,,splits,Figure 3 label
+LibriBrain,80,88.11,,splits,Figure 3 label
+LibriBrain,100,88.52,,splits,Figure 3 label

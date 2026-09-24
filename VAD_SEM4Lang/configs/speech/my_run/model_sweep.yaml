@@ -1,0 +1,108 @@
+# ============================================================================
+# model_sweep.yaml — VAD_SEM4Lang 多模型参数 (204ch, 12 subjects, MEG)
+# ============================================================================
+
+# Original three-branch backbone with the common subject-indexed frontend.
+brain_magic_speech:
+  input_dim: 204
+  attention_dim: 128
+  output_dim: 1
+  kernel_size: 25
+  depthwise_kernel: 19
+  dropout: 0.01
+  n_subjects: 12
+
+brain_magic_speech_v7:
+  input_dim: 204
+  attention_dim: 128
+  output_dim: 1
+  kernel_size: 40
+  depthwise_kernel: 30
+  n_subjects: 12
+  num_blocks1: 8
+  num_blocks2: 19
+  dropout: 0.1
+
+brain_magic_no_short_conv:
+  input_dim: 204
+  attention_dim: 128
+  output_dim: 1
+  kernel_size: 40
+  depthwise_kernel: 30
+  n_subjects: 12
+  num_blocks1: 8
+  num_blocks2: 19
+  dropout: 0.1
+
+brain_magic_no_feature_encoder:
+  input_dim: 204
+  attention_dim: 128
+  output_dim: 1
+  kernel_size: 40
+  depthwise_kernel: 30
+  n_subjects: 12
+  num_blocks1: 8
+  num_blocks2: 19
+  dropout: 0.1
+
+brain_magic_no_subject_attn:
+  input_dim: 204
+  attention_dim: 128
+  output_dim: 1
+  kernel_size: 40
+  depthwise_kernel: 30
+  n_subjects: 12
+  num_blocks1: 8
+  num_blocks2: 19
+  dropout: 0.1
+
+awavenet:
+  input_dim: 204
+  output_dim: 1
+  res_channels: 32
+  skip_channels: 32
+  num_res_layers: 12
+  dilation_cycle: 4
+  n_subjects: 12
+
+cnn_lstm:
+  input_channels: 204
+  num_kernels: 5
+  kernel_time: 25
+  lstm_hidden: 4
+  output_dim: 1
+  n_subjects: 12
+
+dilated_conv:
+  input_channels: 204
+  output_dim: 1
+  n_layers: 3
+  kernel_size: 3
+  dilation_filters: 32
+  n_subjects: 12
+
+vlaai:
+  input_channels: 204
+  output_dim: 1
+  nb_blocks: 16
+  use_skip: true
+  n_subjects: 12
+
+pnpl_cnn_tcn:
+  input_dim: 204
+  n_subjects: 12
+  model_dim: 100
+  tcn_layers: 6
+  dropout: 0.1
+
+
+eeg_conformer:
+  input_dim: 204
+  emb_size: 128
+  depth: 6
+  num_heads: 8
+  kernel_size: 25
+  pool_size: 8
+  dropout: 0.1
+  forward_expansion: 4
+  n_subjects: 12
